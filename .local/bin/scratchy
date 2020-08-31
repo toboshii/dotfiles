@@ -1,0 +1,9 @@
+#! /bin/sh
+#scratch term
+id=$(xdotool search --class scratchy)
+if [ "$id" != "" ];then
+  bspc node "$id" --flag hidden -f
+else
+$TERMINAL  -c scratchy \
+	   -g 80x15 
+fi

@@ -1,0 +1,43 @@
+#!/bin/bash
+# a shit script i made :0
+# note you'll have to edit this manually if you want certain information to display
+# this script is designed to be as efficent as possible
+
+# colours
+
+blk="\e[1m"
+ncl="\e[m"
+col="\e[1;35m"
+
+# info
+read -r uptime _ < /proc/uptime
+
+up=${uptime%.*}
+days=$(( $up / 86400 ))
+hours=$(( ( $up % 86400 ) / 3600 ))
+min=$(( (( $up % 86400 ) % 3600 ) / 60 ))
+[ $days = 0 ] || d="${days}d "
+[ $hours = 0 ] || h="${hours}h "
+[ $min = 0 ] || m="${min}m "
+
+pkg=0
+for count in /var/db/xbps/.*;do
+	pkg=$(( pkg+1 ))
+done
+sh=$SHELL
+up="$d$h$m"
+os=$(. /etc/{os-release,*-release,*_version} ; echo "$ID" || os="linux")
+id=$(xprop -root _NET_SUPPORTING_WM_CHECK)
+id=${id##* }
+
+	ui="wm"
+	wm=$(xprop -id "$id" _NET_WM_NAME)
+	wm="${wm//\"/}"
+
+clear
+printf '\t%b\n' "\v\v\e[0;31m$blk os $ncl$ncl \t ${os} " 	\
+		"\e[0;32m$blk ${ui} $ncl$ncl  \t ${wm##* }"	\
+		"\e[0;33m$blk sh $ncl$ncl\t ${sh##*/} "	\
+		"\e[0;34m$blk pk $ncl$ncl  \t $pkg "	\
+		"\e[0;35m$blk up $ncl$ncl  \t ${up} \v\v" 
+printf "%b\n\n" "\e[1;31m   $ncl\e[1;32m   $ncl\e[1;33m   $ncl\e[1;34m   $ncl\e[1;35m   $ncl\e[1;36m   $ncl\e[1;34m   $ncl\e[1;31m   $ncl"

@@ -1,0 +1,9 @@
+#! /bin/sh
+id=$(xdotool search --class MusicPlayer)
+if [ "$id" != "" ];then
+  bspc node "$id" --flag hidden -f
+else
+$TERMINAL  -c MusicPlayer \
+	   -g 80x15 \
+	   -e sh -c "$HOME/.config/ncmpcpp/ncmpcpp-ueberzug/ncmpcpp-ueberzug" 
+fi

@@ -1,0 +1,65 @@
+# wm independent hotkeys
+
+# terminal emulator
+super + Return
+	$TERMINAL
+super +  shift + Return
+	jumpapp $TERMINAL
+
+# program launcher
+super + @space
+	rofi -show drun -theme ~/.config/rofi/themes/appsmenu.rasi
+super + r
+	rofi -show run -theme ~/.config/rofi/themes/run.rasi
+alt + Tab
+	rofi -show window -theme ~/.config/rofi/themes/appsmenu.rasi
+
+# exit menu
+super + x
+    exitmenu
+XF86PowerOff
+    exitmenu
+
+
+# screen lock
+super + shift + x
+    lock
+
+# screenshot
+Print
+    screenshot
+super + Print
+	record
+
+# networkmanager menu
+super + F9
+	networkmenu.py
+
+# music player
+super + m
+	ncmpcppalbumart
+
+# scratch terminal
+super + u
+	scratchy
+
+# browser
+super + w
+	jumpapp $BROWSER
+
+# volume controls
+{XF86AudioRaiseVolume,XF86AudioLowerVolume,XF86AudioMute}
+    vol {up,down,mute}
+alt + {F12,F11,F10}
+    vol {up,down,mute}
+
+# media controls
+{XF86AudioNext,XF86AudioPlay,XF86AudioPrev}
+    mpdmgr {next,toggle,prev}
+alt + {F3,F1,F2}
+    mpdmgr {next,toggle,prev}
+
+# backlight controls
+{XF86MonBrightnessDown,XF86MonBrightnessUp}
+    brightnessctl s {10%-,+10%}
+

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+hash="sssscreenshot"
+
+file=$(bashids -e -s $hash "$(date +%s)").png
+
+flameshot gui --raw | upload -f "$file" -

@@ -1,0 +1,26 @@
+#! /bin/sh
+start() {
+    COMMAND=$1
+    shift
+    ARGS=$*
+    pgrep -u "$USER" -ic "$COMMAND" > /dev/null || $COMMAND $ARGS &
+}
+
+$HOME/.fehbg
+start urxvtd 
+start dunst 
+start picom 
+start unclutter
+#start autocutsel -fork
+#start autocutsel -selection PRIMARY -fork
+start xss-lock -- lock
+start batsignal -a Battery
+start blueman-applet
+start mopidy &> /tmp/mopidy.log
+xsetroot -cursor_name left_ptr &
+#setxkbmap -option "caps:swapescape" &
+#mpc load playlist 
+#mpc shuffle
+2bspwm &
+startupnotif &
+$HOME/.config/polybar/launch.sh &

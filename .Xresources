@@ -1,0 +1,33 @@
+Xcursor.size:  16 
+
+xft.dpi:       120
+xft.antialias: true
+xft.hinting:   true
+xft.rgba:      rgb
+xft.autohint:  false
+xft.hintstyle: hintslight
+xft.lcdfilter: lcddefault
+
+URxvt.font: xft:Iosevka Term:size=12,xft:DejaVuSansMono Nerd Font:size=12,xft:Kochi Gothic:size=12:antialias=false,xft:Symbola:size=8
+
+! Enable clickable links
+URxvt.perl-ext:	  default,matcher
+URxvt.url-launcher: xdg-open
+URxvt.matcher.button: 1
+
+! No ugly scrollbar plz
+URxvt.scrollBar: false
+
+! Restore Ctrl+Shift+(c|v)
+URxvt.keysym.Shift-Control-V: eval:paste_clipboard
+URxvt.keysym.Shift-Control-C: eval:selection_to_clipboard
+URxvt.keysym.Control-Meta-c: builtin-string:
+URxvt.keysym.Control-Meta-v: builtin-string:
+
+! Disable keycap printing
+URxvt.iso14755: false
+URxvt.iso14755_52: false
+
+
+
+#include ".config/xcolorschemes/horizon.Xresources"

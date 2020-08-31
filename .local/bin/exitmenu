@@ -1,0 +1,20 @@
+#! /bin/sh
+
+var="$(printf "Log out\nLock\nReboot\nPower off\nCancel" | rofi -p "Menu" -i -dmenu)"
+case $var in
+    "Log out")
+	 bspc quit
+	;;
+    "Lock")
+	lock
+	;;
+    "Reboot")
+	sudo reboot
+	;;
+    "Power off")
+	sudo halt
+	;;
+    *)
+	exit
+	;;
+esac

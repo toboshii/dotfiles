@@ -1,0 +1,126 @@
+#!/bin/bash -e
+
+# Initialize our own variables:
+verbose=0
+date=$(date +%Y-%m-%d)
+domain='s.56k.jp'
+bucket='toboshii'
+s3_path='/'
+
+# Usage info
+show_help() {
+cat << EOF
+Usage: ${0##*/} [-hv] [-d date] [FILE]...
+Do stuff with FILE and write the result to standard output. When FILE is -, read standard input.
+
+    -h          display this help and exit
+    -d date     date other than today's date
+    -v          verbose mode. Can be used multiple times for increased
+                verbosity.
+EOF
+}
+
+# Upload to s3 using curl
+put_s3() {
+    path=$1
+    file=$2
+    s3_path=$3
+    date=$(date +"%a, %d %b %Y %T %z")
+    acl="x-amz-acl:public-read"
+    content_type=$(file -b --mime-type "$path/$file")
+    string="PUT\n\n$content_type\n$date\n$acl\n/$bucket$s3_path$file"
+    signature=$(echo -en "${string}" | openssl sha1 -hmac "${S3SECRET}" -binary | base64)
+    curl -X PUT -T "$path/$file" \
+        -H "Host: $domain" \
+        -H "Date: $date" \
+        -H "Content-Type: $content_type" \
+        -H "$acl" \
+        -H "Authorization: AWS ${S3KEY}:$signature" \
+        "https://$domain/$bucket$s3_path$file"
+}
+
+# Get s3 credentials from bitwarden
+fetch_creds() {
+    S3KEY=$(bw get username $domain)
+    S3SECRET=$(bw get password $domain)
+}
+
+OPTIND=1 # Reset is necessary if getopts was used previously in the script.  It is a good idea to make this local in a function.
+while getopts "hvf:" opt; do
+    case "$opt" in
+        h)
+            show_help
+            exit 0
+            ;;
+        v)  verbose=$((verbose+1))
+            ;;
+        f)  infile="$OPTARG"
+            ;;
+        '?')
+            show_help >&2
+            exit 1
+            ;;
+    esac
+done
+shift "$((OPTIND-1))" # Shift off the options and optional --.
+
+fetch_creds
+
+tmp=$(mktemp -u)
+mkdir "$tmp"
+trap 'rm -rf "$tmp"' EXIT
+urls=()
+
+for src in "$@"
+do
+
+	if test -d "$src"
+	then
+		tar="$(basename "$src").tar"
+		tar cvf "$tar" "$src"
+		src="$tar"
+	fi
+
+    if test "$src" == "-" 
+    then
+        if ! test -z "$infile"
+        then
+            src="$tmp/$infile"
+        else
+        src="$tmp/$date-$(base64 /dev/urandom | tr -d '/+' | head -c 10)"
+        fi
+        cat - > "$src"
+    fi
+
+	if ! test -f "$src"
+	then
+		echo Missing filename "$src" >&2
+		continue
+	fi
+
+    file=$(basename "$src")
+	chmod +r "$src"
+
+	if test "${src##*.}" == "png"
+	then
+		hash pngquant && pngquant -fo "$tmp/$file" "$src"
+        src="$tmp/$file"
+	fi
+
+    if test "${src##*.}" == "jpg"
+	then
+		hash jpegoptim && jpegoptim "$src" -fod "$tmp"
+		src="$tmp/$file"
+	fi
+
+    if put_s3 "$tmp" "$file" "$s3_path"
+	then
+        url=https://$domain/$bucket$s3_path$file
+        urls+=("$url")
+		logger "$url"
+        hash dunstify && dunstify "$file uploaded"
+	fi
+
+done
+
+printf "%s\n" "${urls[@]}" | xclip -sel clip
