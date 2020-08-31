@@ -7,4 +7,4 @@ Yes, my home directory is a bare git repository! Check out [Atlassian's guide](h
 
 ## Wallace (laptop)
 Currently built around the Horizon color scheme.
-![screenshot](.local/share/assets/horizon.png)
+![screenshot](.local/assets/horizon.png)
