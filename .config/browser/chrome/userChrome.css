@@ -761,7 +761,7 @@ panelview .toolbarbutton-1,
 
 #appMenu-zoom-controls > toolbarseparator[orient="vertical"] + .subviewbutton
 {
-3margin-inline-start: 0 !important;
+ margin-inline-start: 0 !important;
 }
 
 #appMenu-zoom-controls > .subviewbutton-iconic,
